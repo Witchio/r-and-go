@@ -971,8 +971,8 @@ export function SanFranciscoMap({
   const [zoom, setZoom] = useState<number>(1);
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  // Default to true so the Real Street Map is shown out-of-the-box (can toggle between Real Map & Vector Map)
-  const [showSatelliteGrid, setShowSatelliteGrid] = useState(true);
+  // Default to false so the Vector Map (mock map) is shown out-of-the-box (can toggle between Real Map & Vector Map)
+  const [showSatelliteGrid, setShowSatelliteGrid] = useState(false);
 
   // Direct DOM ref for 60fps zero-lag panning without React re-renders per mouse pixel
   const panGroupRef = useRef<SVGGElement | null>(null);
