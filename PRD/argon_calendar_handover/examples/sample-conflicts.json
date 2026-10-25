@@ -1,0 +1,38 @@
+{
+  "note": "Fixture states are illustrative and not independently route-verified.",
+  "conflicts": [
+    {
+      "id": "cf1",
+      "type": "travel_impossible",
+      "severity": "critical",
+      "eventIds": [
+        "evt1",
+        "evt2"
+      ],
+      "availableMinutes": 15,
+      "requiredMinutes": 25,
+      "status": "new",
+      "illustrativeOnly": true
+    },
+    {
+      "id": "cf2",
+      "type": "overlap",
+      "severity": "warning",
+      "eventIds": [
+        "evt2",
+        "evt3"
+      ],
+      "status": "investigating",
+      "investigationHypothesis": "Event evt2 may have optional tail, subject to credible source validation"
+    },
+    {
+      "id": "cf3",
+      "type": "missing_location",
+      "severity": "warning",
+      "eventIds": [
+        "evt4"
+      ],
+      "status": "new"
+    }
+  ]
+}
