@@ -108,17 +108,11 @@ export function DayItineraryOverviewStrip({
           </span>
         </div>
 
-        <span
-          className={`shrink-0 rounded-md px-1.5 py-0.5 font-bold ${
-            conflictsCount > 0
-              ? 'bg-rose-100 text-rose-700'
-              : 'bg-emerald-100 text-emerald-700'
-          }`}
-        >
-          {conflictsCount > 0
-            ? `${conflictsCount} ${conflictsCount === 1 ? 'conflict' : 'conflicts'}`
-            : 'Schedule clear'}
-        </span>
+        {conflictsCount > 0 && (
+          <span className="shrink-0 rounded-md px-1.5 py-0.5 font-bold bg-rose-100 text-rose-700">
+            {`${conflictsCount} ${conflictsCount === 1 ? 'conflict' : 'conflicts'}`}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -628,7 +622,7 @@ export function SidebarEventLocationCard({
                 className="inline-flex items-center gap-1 rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-800 hover:bg-amber-100 cursor-pointer"
               >
                 <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
-                <span>Location missing · Resolve with Argon →</span>
+                <span>Location missing · Resolve with R &amp; Go →</span>
               </button>
             )}
           </div>

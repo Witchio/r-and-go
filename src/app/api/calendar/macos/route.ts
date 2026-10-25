@@ -8,6 +8,7 @@ import {
   extractEventUrl,
   geocodeLocationWithFallback,
 } from '@/lib/adapters/calendar-integrations';
+import { ensureCompleteEventAddress } from '@/lib/fixtures/scenarios';
 import { CalendarEvent } from '@/lib/types';
 
 const execFileAsync = promisify(execFile);
@@ -73,19 +74,24 @@ export async function POST() {
         ? { neighborhood: 'Virtual Meeting', coordinates: undefined }
         : await geocodeLocationWithFallback(r.location);
 
-      events.push({
-        id: `macos-${r.uid}-${i}`,
-        title: r.title || 'Untitled macOS Event',
-        start: r.start,
-        end: r.end,
-        location: r.location,
-        neighborhood: geo.neighborhood,
-        coordinates: geo.coordinates,
-        organizer: r.calendarName,
-        description: r.description || undefined,
-        eventUrl: extractEventUrl(r.description, r.url),
-        isVirtual,
-      });
+      events.push(
+        ensureCompleteEventAddress(
+          {
+            id: `macos-${r.uid}-${i}`,
+            title: r.title || 'Untitled macOS Event',
+            start: r.start,
+            end: r.end,
+            location: r.location,
+            neighborhood: geo.neighborhood,
+            coordinates: geo.coordinates,
+            organizer: r.calendarName,
+            description: r.description || undefined,
+            eventUrl: extractEventUrl(r.description, r.url),
+            isVirtual,
+          },
+          i
+        )
+      );
     }
 
     events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());

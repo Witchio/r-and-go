@@ -22,7 +22,7 @@ export default async function OrganizerEventPage({
             href="/"
             className="mt-6 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
           >
-            ← Back to Argon Travel Planner
+            ← Back to R &amp; Go
           </Link>
         </div>
       </div>
@@ -40,7 +40,7 @@ export default async function OrganizerEventPage({
             href="/"
             className="rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-800"
           >
-            ← Return to Argon Planner
+            ← Return to R &amp; Go
           </Link>
         </div>
 

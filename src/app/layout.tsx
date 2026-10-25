@@ -2,16 +2,16 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Argon Calendar Travel Planner — Schedule & Route Intelligence',
+  title: 'R & Go — Schedule & Route Intelligence',
   description:
-    'Split-screen calendar and multimodal route planner with deterministic departure calculation and Gemini Argon evidence-backed conflict investigation.',
+    'R & Go: Split-screen calendar and multimodal route planner with deterministic departure calculation and AI evidence-backed conflict investigation.',
   icons: {
     icon: [
-      { url: '/argon-icon.svg?v=argon1', type: 'image/svg+xml' },
-      { url: '/favicon.ico?v=argon1', sizes: '64x64' },
+      { url: '/r-and-go-icon.svg?v=randgo1', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=randgo1', sizes: '64x64' },
     ],
-    shortcut: '/favicon.ico?v=argon1',
-    apple: '/apple-touch-icon.png?v=argon1',
+    shortcut: '/favicon.ico?v=randgo1',
+    apple: '/apple-touch-icon.png?v=randgo1',
   },
 };
 

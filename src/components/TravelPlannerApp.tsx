@@ -41,6 +41,7 @@ import {
 import {
   HANDOVER_SAMPLE_EVENTS,
   SCENARIO_PRESETS,
+  ensureCompleteEventAddress,
   resolveLocationCoordinates,
 } from '@/lib/fixtures/scenarios';
 import {
@@ -187,8 +188,9 @@ export function TravelPlannerApp() {
   // Sidebar & Selection State
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'calendar' | 'conflicts'>('calendar');
-  const [selectedEventId, setSelectedEventId] = useState<string | null>('evt2');
-  const [selectedLegId, setSelectedLegId] = useState<string | null>('leg-evt1-evt2');
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedLegId, setSelectedLegId] = useState<string | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState<boolean>(false);
 
   // Argon Investigation & Contextual Resolution Drawer State (Item #7 & #8)
   const [expandedConflictId, setExpandedConflictId] = useState<string | null>(null);
@@ -221,7 +223,13 @@ export function TravelPlannerApp() {
       if (saved) {
         const parsed = JSON.parse(saved) as ConnectedCalendarSource[];
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setConnectedSources(parsed);
+          const normalized = parsed.map((src) => ({
+            ...src,
+            events: (src.events || []).map((evt, idx) =>
+              ensureCompleteEventAddress(evt, idx)
+            ),
+          }));
+          setConnectedSources(normalized);
         }
       }
     } catch {
@@ -290,8 +298,9 @@ export function TravelPlannerApp() {
       setInvestigationsByConflict({});
       setPreviewProposal(null);
       setUndoSnapshot(null);
-      setSelectedEventId(combined[0]?.id || null);
+      setSelectedEventId(null);
       setSelectedLegId(null);
+      setInspectorOpen(false);
       return;
     }
 
@@ -303,8 +312,9 @@ export function TravelPlannerApp() {
     setInvestigationsByConflict({});
     setPreviewProposal(null);
     setUndoSnapshot(null);
-    setSelectedEventId(preset.events[0]?.id || null);
+    setSelectedEventId(null);
     setSelectedLegId(null);
+    setInspectorOpen(false);
 
     // Keep default morning origin aligned with the active California preset
     if (sourceId === 'california-corridor') {
@@ -472,8 +482,9 @@ export function TravelPlannerApp() {
         newDateIso
       );
       setEvents(dayPersonal);
-      setSelectedEventId(dayPersonal[0]?.id || null);
+      setSelectedEventId(null);
       setSelectedLegId(null);
+      setInspectorOpen(false);
       return;
     }
 
@@ -482,8 +493,9 @@ export function TravelPlannerApp() {
         SCENARIO_PRESETS.find((s) => s.id === activeSourceId) ||
         SCENARIO_PRESETS[0];
       setEvents(preset.events);
-      setSelectedEventId(preset.events[0]?.id || null);
+      setSelectedEventId(null);
       setSelectedLegId(null);
+      setInspectorOpen(false);
       return;
     }
 
@@ -499,8 +511,9 @@ export function TravelPlannerApp() {
       overlapping.length > 0 ? overlapping : dayFixture?.events || [];
 
     setEvents(resolvedEvents);
-    setSelectedEventId(resolvedEvents[0]?.id || null);
+    setSelectedEventId(null);
     setSelectedLegId(null);
+    setInspectorOpen(false);
   };
 
   // Deterministic Itinerary & Conflict Evaluation
@@ -786,7 +799,7 @@ export function TravelPlannerApp() {
       neighborhood: resolved.neighborhood,
       coordinates: resolved.coordinates,
       isVirtual: newEvtVirtual,
-      organizer: 'Added in Argon Planner',
+      organizer: 'Added in R & Go',
     };
 
     setEvents((prev) => [...prev, created]);
@@ -806,7 +819,7 @@ export function TravelPlannerApp() {
       location: evt.location || '',
       details:
         evt.description ||
-        'Verified itinerary from Argon Calendar Travel Planner',
+        'Verified itinerary from R & Go Travel Planner',
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
   };
@@ -832,7 +845,7 @@ export function TravelPlannerApp() {
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 font-semibold text-slate-900">
                   <ShieldCheck className="h-4 w-4 text-indigo-600" />
-                  <span>Argon Evidence:</span>
+                  <span>R &amp; Go Evidence:</span>
                   <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-semibold capitalize text-indigo-700 border border-indigo-200/60">
                     {investigation.confidence}
                   </span>
@@ -984,13 +997,14 @@ export function TravelPlannerApp() {
         >
           <div className="flex items-center gap-2 min-w-0">
             <img
-              src="/argon-icon.svg"
-              alt="Argon"
+              src="/r-and-go-icon.svg"
+              alt="R & Go"
               className="h-6 w-6 shrink-0 rounded-md"
             />
             {!sidebarCollapsed && (
-              <span className="text-[19px] font-extrabold tracking-tight text-slate-900">
-                argon<span className="text-indigo-600">.</span>
+              <span className="text-[18px] font-extrabold tracking-tight text-slate-900 shrink-0">
+                R <span className="text-indigo-600">&amp;</span> Go
+                <span className="text-indigo-600">.</span>
               </span>
             )}
 
@@ -1241,6 +1255,7 @@ export function TravelPlannerApp() {
                             if (playback.timeline.homeLeg) {
                               setSelectedLegId(playback.timeline.homeLeg.id);
                             }
+                            setInspectorOpen(true);
                           }}
                           onToggleEdit={() => {
                             if (isEditingHome && !homeAddress.trim()) {
@@ -1279,6 +1294,7 @@ export function TravelPlannerApp() {
                               setSelectedEventId(
                                 playback.timeline.homeLeg!.toEventId
                               );
+                              setInspectorOpen(true);
                             }}
                             onChangeMode={(mode) => setHomeMode(mode)}
                           />
@@ -1325,7 +1341,15 @@ export function TravelPlannerApp() {
                                   setSelectedEventId(evt.id);
                                   if (outgoingLeg) {
                                     setSelectedLegId(outgoingLeg.id);
+                                  } else {
+                                    const incomingLeg = activeEvaluation.legs.find(
+                                      (l) => l.toEventId === evt.id
+                                    );
+                                    if (incomingLeg) {
+                                      setSelectedLegId(incomingLeg.id);
+                                    }
                                   }
+                                  setInspectorOpen(true);
                                 }}
                                 onTriggerMissingLocationResolve={(conflictId) =>
                                   triggerInvestigation(conflictId)
@@ -1350,6 +1374,7 @@ export function TravelPlannerApp() {
                                   onSelect={() => {
                                     setSelectedLegId(outgoingLeg.id);
                                     setSelectedEventId(outgoingLeg.toEventId);
+                                    setInspectorOpen(true);
                                   }}
                                   onChangeMode={(mode) =>
                                     setSelectedModes((prev) => ({
@@ -1385,6 +1410,7 @@ export function TravelPlannerApp() {
                                 playback.timeline.homeReturnLeg!.id
                               );
                               setSelectedEventId('evt-home-return');
+                              setInspectorOpen(true);
                             }}
                             onChangeMode={(mode) => setHomeReturnMode(mode)}
                           />
@@ -1403,6 +1429,7 @@ export function TravelPlannerApp() {
                                   playback.timeline.homeReturnLeg.id
                                 );
                               }
+                              setInspectorOpen(true);
                             }}
                             onEditHomeClick={() => setIsEditingHome(true)}
                           />
@@ -1564,6 +1591,7 @@ export function TravelPlannerApp() {
         conflicts={activeEvaluation.conflicts}
         selectedEventId={selectedEventId}
         selectedLegId={selectedLegId}
+        inspectorOpen={inspectorOpen}
         previewProposal={previewProposal}
         bufferMinutes={bufferMinutes}
         playback={playback}
@@ -1575,6 +1603,7 @@ export function TravelPlannerApp() {
           if (leg) setSelectedLegId(leg.id);
         }}
         onSelectLeg={(legId) => setSelectedLegId(legId)}
+        onCloseInspector={() => setInspectorOpen(false)}
         onChangeMode={(legId, mode) => {
           if (legId === 'leg-home-origin') {
             setHomeMode(mode);

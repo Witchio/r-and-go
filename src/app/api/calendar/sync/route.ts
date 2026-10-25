@@ -92,7 +92,7 @@ UID:personal-evt-101@google.com
 DTSTART:20261025T083000
 DTEND:20261025T093000
 SUMMARY:Morning Espresso & Pitch Prep
-LOCATION:Financial District, San Francisco, CA
+LOCATION:235 Montgomery St, Financial District, San Francisco, CA 94104
 DESCRIPTION:Review slide deck before heading to Ferry Building.
 END:VEVENT
 BEGIN:VEVENT
@@ -100,7 +100,7 @@ UID:personal-evt-102@google.com
 DTSTART:20261025T100000
 DTEND:20261025T140000
 SUMMARY:Gemini 4 Argon SF Hackathon @ SHACK15
-LOCATION:SHACK15, Ferry Building, San Francisco, CA
+LOCATION:SHACK15, 1 Ferry Building Suite 201, San Francisco, CA 94111
 DESCRIPTION:Official schedule: core demo build 10:00 AM - 2:00 PM at Ferry Building.
 URL:/organizer/dev-summit
 END:VEVENT
@@ -109,7 +109,7 @@ UID:personal-evt-103@google.com
 DTSTART:20261025T143000
 DTEND:20261025T153000
 SUMMARY:1:1 Co-Founder Sync
-LOCATION:Moscone Center, San Francisco, CA
+LOCATION:Moscone Center, 747 Howard St, San Francisco, CA 94103
 DESCRIPTION:In-person architecture check-in at Yerba Buena / Moscone Center.
 END:VEVENT
 BEGIN:VEVENT

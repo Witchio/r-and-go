@@ -527,7 +527,7 @@ export function CalendarIntegrationModal({
                 </div>
                 <p className="mt-1 text-xs text-slate-600">
                   {availableCalendars.length > 0
-                    ? `Signed in as ${accountEmail}. Select which calendars you want to load into Argon Planner.`
+                    ? `Signed in as ${accountEmail}. Select which calendars you want to load into R & Go.`
                     : 'Authenticate once with Google to view and pick from all calendars in your account (including Google Workspace calendars).'}
                 </p>
               </div>

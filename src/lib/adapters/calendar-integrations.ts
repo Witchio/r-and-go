@@ -2,6 +2,7 @@ import {
   AddressSuggestion,
   CALIFORNIA_BOUNDS,
   clampToCalifornia,
+  ensureCompleteEventAddress,
   GLOBAL_CITY_CENTERS,
   GLOBAL_LOCATIONS,
   resolveLocationCoordinates,
@@ -409,18 +410,23 @@ export async function parseIcsToEvents(
       ? { neighborhood: 'Virtual Meeting', coordinates: undefined }
       : await geocodeLocationWithFallback(c.location);
 
-    parsedEvents.push({
-      id: `${sourcePrefix}-${c.uid}-${c.index}`,
-      title: c.title,
-      start: c.startIso,
-      end: c.endIso,
-      location: isVirtual ? c.location || 'Virtual Meeting' : c.location,
-      neighborhood: geo.neighborhood,
-      coordinates: geo.coordinates,
-      description: c.description,
-      eventUrl,
-      isVirtual,
-    });
+    parsedEvents.push(
+      ensureCompleteEventAddress(
+        {
+          id: `${sourcePrefix}-${c.uid}-${c.index}`,
+          title: c.title,
+          start: c.startIso,
+          end: c.endIso,
+          location: isVirtual ? c.location || 'Virtual Meeting' : c.location,
+          neighborhood: geo.neighborhood,
+          coordinates: geo.coordinates,
+          description: c.description,
+          eventUrl,
+          isVirtual,
+        },
+        c.index
+      )
+    );
   }
 
   return parsedEvents.sort(
@@ -557,19 +563,24 @@ export async function fetchGoogleCalendarEvents(params: {
       ? { neighborhood: 'Virtual Meeting', coordinates: undefined }
       : await geocodeLocationWithFallback(location);
 
-    normalized.push({
-      id: `gcal-${item.id}`,
-      title: item.summary || 'Busy / Untitled Event',
-      start: new Date(rawStart).toISOString(),
-      end: new Date(rawEnd).toISOString(),
-      location: isVirtual ? item.hangoutLink || location || 'Google Meet' : location,
-      neighborhood: geo.neighborhood,
-      coordinates: geo.coordinates,
-      organizer: item.organizer?.displayName || item.organizer?.email,
-      description: item.description,
-      eventUrl: extractEventUrl(item.description),
-      isVirtual,
-    });
+    normalized.push(
+      ensureCompleteEventAddress(
+        {
+          id: `gcal-${item.id}`,
+          title: item.summary || 'Busy / Untitled Event',
+          start: new Date(rawStart).toISOString(),
+          end: new Date(rawEnd).toISOString(),
+          location: isVirtual ? item.hangoutLink || location || 'Google Meet' : location,
+          neighborhood: geo.neighborhood,
+          coordinates: geo.coordinates,
+          organizer: item.organizer?.displayName || item.organizer?.email,
+          description: item.description,
+          eventUrl: extractEventUrl(item.description),
+          isVirtual,
+        },
+        normalized.length
+      )
+    );
   }
 
   return {

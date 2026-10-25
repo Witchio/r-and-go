@@ -13,6 +13,7 @@ import {
   Plus,
   Sparkles,
   TrainFront,
+  X,
 } from 'lucide-react';
 import {
   CalendarEvent,
@@ -61,11 +62,13 @@ interface SanFranciscoMapProps {
   conflicts: Conflict[];
   selectedEventId: string | null;
   selectedLegId: string | null;
+  inspectorOpen?: boolean;
   previewProposal: ResolutionProposal | null;
   bufferMinutes: number;
   playback?: MapPlaybackController;
   onSelectEvent: (eventId: string) => void;
   onSelectLeg: (legId: string) => void;
+  onCloseInspector?: () => void;
   onChangeMode: (legId: string, mode: TravelMode) => void;
   onInvestigateConflict: (conflictId: string) => void;
 }
@@ -955,11 +958,13 @@ export function SanFranciscoMap({
   conflicts,
   selectedEventId,
   selectedLegId,
+  inspectorOpen = false,
   previewProposal,
   bufferMinutes,
   playback,
   onSelectEvent,
   onSelectLeg,
+  onCloseInspector,
   onChangeMode,
   onInvestigateConflict,
 }: SanFranciscoMapProps) {
@@ -1002,11 +1007,14 @@ export function SanFranciscoMap({
       : selectedLegId === 'leg-home-return' && playback?.timeline.homeReturnLeg
       ? playback.timeline.homeReturnLeg
       : null) ||
-    legs.find((l) => l.id === selectedLegId) ||
-    legs.find(
-      (l) => l.fromEventId === selectedEventId || l.toEventId === selectedEventId
-    ) ||
-    legs[0] ||
+    (selectedLegId ? legs.find((l) => l.id === selectedLegId) : null) ||
+    (selectedEventId
+      ? legs.find(
+          (l) => l.fromEventId === selectedEventId || l.toEventId === selectedEventId
+        ) ||
+        (selectedEventId === 'evt-home-origin' ? playback?.timeline.homeLeg : null) ||
+        (selectedEventId === 'evt-home-return' ? playback?.timeline.homeReturnLeg : null)
+      : null) ||
     null;
 
   const activeConflict = activeLeg
@@ -1016,7 +1024,7 @@ export function SanFranciscoMap({
           (c.eventIds.includes(activeLeg.fromEventId) &&
             c.eventIds.includes(activeLeg.toEventId))
       )
-    : conflicts[0];
+    : undefined;
 
   const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
     if ((e.target as HTMLElement).closest('[data-interactive-pin="true"]')) return;
@@ -1177,10 +1185,10 @@ export function SanFranciscoMap({
         </button>
       </div>
 
-      {/* UNIFIED BOTTOM-RIGHT JOURNEY INSPECTOR CARD (Item #4 — Anchored Bottom-Right) */}
-      {activeLeg && (
+      {/* UNIFIED BOTTOM-RIGHT JOURNEY INSPECTOR CARD (Only shown when user clicks an event/leg in left navbar, and closable) */}
+      {inspectorOpen && activeLeg && (
         <div className="absolute right-6 bottom-6 z-10 w-[365px] rounded-2xl bg-white/98 backdrop-blur-md p-5 shadow-[0_14px_40px_rgba(15,23,42,0.16)] border border-slate-200/80">
-          {/* Top Status & Window Row */}
+          {/* Top Status, Window & Close Button Row */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
               {activeLeg.status === 'impossible' ? (
@@ -1203,11 +1211,24 @@ export function SanFranciscoMap({
               )}
             </div>
 
-            <span className="text-[11px] font-medium text-slate-400">
-              {activeLeg.availableWindowMinutes >= 0
-                ? `${activeLeg.availableWindowMinutes}m window`
-                : `Overlaps by ${Math.abs(activeLeg.availableWindowMinutes)}m`}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-medium text-slate-400">
+                {activeLeg.availableWindowMinutes >= 0
+                  ? `${activeLeg.availableWindowMinutes}m window`
+                  : `Overlaps by ${Math.abs(activeLeg.availableWindowMinutes)}m`}
+              </span>
+              {onCloseInspector && (
+                <button
+                  type="button"
+                  onClick={onCloseInspector}
+                  title="Close journey details"
+                  aria-label="Close journey details"
+                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Leg Corridor Title & Event Times */}
@@ -1325,7 +1346,7 @@ export function SanFranciscoMap({
               className="mt-3.5 w-full flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 py-2.5 px-4 text-[13px] font-semibold text-white shadow-2xs transition-colors cursor-pointer"
             >
               <Sparkles className="h-4 w-4" />
-              <span>Investigate & resolve with Argon</span>
+              <span>Investigate &amp; resolve with R &amp; Go</span>
             </button>
           )}
         </div>

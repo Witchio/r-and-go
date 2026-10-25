@@ -6,7 +6,7 @@
       "title": "Product meeting",
       "start": "2026-10-25T09:00:00-07:00",
       "end": "2026-10-25T10:15:00-07:00",
-      "location": "Union Square, San Francisco, CA",
+      "location": "333 Post St, Union Square, San Francisco, CA 94108",
       "isVirtual": false
     },
     {
@@ -14,7 +14,7 @@
       "title": "Developer summit",
       "start": "2026-10-25T11:00:00-07:00",
       "end": "2026-10-25T14:30:00-07:00",
-      "location": "Ferry Building, San Francisco, CA",
+      "location": "1 Ferry Building, The Embarcadero, San Francisco, CA 94111",
       "isVirtual": false,
       "description": "Core technical talks and live architecture keynotes (11:00\u201314:30) at Ferry Building Grand Hall.",
       "eventUrl": "https://example.org/fake-demo-agenda",
@@ -32,7 +32,7 @@
       "title": "Client coffee",
       "start": "2026-10-25T15:00:00-07:00",
       "end": "2026-10-25T16:00:00-07:00",
-      "location": "SoMa, San Francisco, CA",
+      "location": "108 South Park St, SoMa, San Francisco, CA 94107",
       "isVirtual": false
     },
     {
@@ -40,7 +40,7 @@
       "title": "Community dinner",
       "start": "2026-10-25T17:00:00-07:00",
       "end": "2026-10-25T18:30:00-07:00",
-      "location": "SHACK15, Ferry Building Suite 201, San Francisco, CA",
+      "location": "SHACK15, 1 Ferry Building Suite 201, San Francisco, CA 94111",
       "isVirtual": false
     }
   ]
